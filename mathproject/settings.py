@@ -17,9 +17,9 @@ SECRET_KEY = 'django-insecure-4tg#hl0wisfxs4^6td++^0pio-pu_v37ahdc8ovl)fs)5vej2r
 DEBUG = True
 
 if DEBUG:
-    ALLOWED_HOSTS=['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS=['mbirth.pythonanywhere.com']
 else:
-    ALLOWED_HOSTS=[]
+    ALLOWED_HOSTS=['mbirth.pythonanywhere.com']
 
 MESSAGE_TAGS={
     constants.SUCCESS:"alert alert-success",
