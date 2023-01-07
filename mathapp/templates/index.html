@@ -1,0 +1,29 @@
+<!--ベーステンプレートを適用-->
+{% extends 'base.html' %}
+
+<!--タグ名-->
+{% block title %}
+    Mbirth
+{% endblock title %}
+
+
+{% block contents %}
+    
+    {% if user.is_authenticated == False %}
+        <!--ログインしていなかったらheroを表示-->
+            
+        <!--hero部分を追加-->
+        {% include 'hero.html' %}
+
+    {% endif %}    
+
+
+    <!--問題リストの部分を追加-->
+    {% include 'question_list.html' %}
+
+    
+
+
+{% endblock contents %}
+    
+    

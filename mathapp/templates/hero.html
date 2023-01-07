@@ -1,0 +1,21 @@
+<!-- ヒーロー部分 -->
+{% load static %}
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-10 col-sm-8 col-lg-6">
+            <img src="{% static "img/home-bg1.jpg" %}" class="d-block mx-lg-auto img-fluid" alt="画像" width="700" height="500"
+                loading="lazy">
+        </div>
+        <div class="col-lg-6">
+            <h1 class="display-5 fw-bold lh-1 mb-3">Mbirthで幅広い視点の問題に挑め</h1>
+            <p class="lead">
+                作成した数学・算数の問題を投稿して、世界中に発信することができます。投稿以外にも、
+                誰かが作成した問題を解くこともできます。お気に入りの問題にはいいねをしたり、お気に入りのユーザーをフォローしたりしましょう！今すぐ会員登録・ログイン！
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2"onclick="location.href='{% url "accounts:signup" %}'">会員登録</button>
+                <button type="button" class="btn btn-outline-secondary btn-lg px-4"onclick="location.href='{% url "accounts:login" %}'">登録済みの方はログイン</button>
+            </div>
+        </div>
+    </div>
+</div>

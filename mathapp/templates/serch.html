@@ -1,0 +1,59 @@
+<!--ベーステンプレートを適用-->
+{% extends 'base.html' %}
+<!--widget_tweaksの適用-->
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block title %}
+    Mbirth - Serch
+{% endblock title %}
+
+
+{% block contents %}
+{% if user.is_authenticated == False %}
+<!--ログインしていなかったらheroを表示-->
+    
+<!--hero部分を追加-->
+{% include 'hero.html' %}
+
+{% endif %}    
+<!--クエリ切り替えバー-->
+<br>
+<div class="tab-wrap">
+    <!--新しい投稿ページへのリンク-->
+    <input id="TAB-01" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:index" %}'" /><label class="tab-label" for="TAB-01">新しい投稿</label>
+
+    <!--人気の投稿へのリンク-->
+    <input id="TAB-03" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:popular" %}'" /><label class="tab-label" for="TAB-03">人気の投稿</label>
+    
+    <!--古い投稿ページへのリンク-->
+    <input id="TAB-02" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:old" %}'" /><label class="tab-label" for="TAB-02">古い投稿</label>
+</div>
+<div class="px-4 py-5  text-center bg-light">
+    <h1 class="display-5 fw-bold">好きなワードで検索</h1>
+    <div class="col-lg-6 mx-auto">
+        <form method="post">
+            {% csrf_token %}
+            <br><br>
+            <div class="form-group row">
+                <label for="{{ form.word.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">
+                    検索ワードを入力
+                </label>
+                <div class="col-sm-9">
+                    {{ form.word|add_class:'form-control' }}  <!--form-controlクラスを付与してformに格納されているinputボックスを表示-->
+                    <br>
+                    <p style="color: gray;">なるべく一つのワードに絞って検索してください。検索が上手くいかない場合があります。</p>
+                    <br>
+                </div>
+            </div>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"><!--検索ボタン-->
+                <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">検索</button>
+            </div>
+        </form>
+        <br>
+        
+    </div>
+</div>
+{% endblock contents %}
+    

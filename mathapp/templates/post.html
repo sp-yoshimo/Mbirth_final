@@ -1,0 +1,90 @@
+<!--ベーステンプレートを適用-->
+{% extends 'base.html' %}
+
+<!--widget_tweaksの適用-->
+{% load widget_tweaks %}
+
+<!--タグ名-->
+{% block title %}
+Mbirth - Post
+{% endblock title %}
+
+{% block contents %}
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>算数・数学問題の投稿</h3>
+            <br>
+            <!--サインアップのフォームを配置-->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!--問題タイトル-->
+                <div class="form-group row">
+                    <label for="{{ form.title.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">問題タイトル</label>
+                    <div class="col-sm-9">
+                        {{ form.title|add_class:'form-control' }}
+                        <br>
+                    </div>
+                </div>
+
+                <!--問題文-->
+                <div class="form-group row">
+                    <label for="{{ form.content.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">
+                        問題文
+                        <br><br><br>
+                        <p style="color: gray; font-weight: 200;">
+                            ・答えが整数・小数になる問題にしてください<br>
+                            ・文だけで問題を投稿するのが難しい場合(図形問題など)は、以下の画像の投稿欄を用いてください。
+                        </p>
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form.content|add_class:'form-control' }}
+                        <br>
+                    </div>
+                </div>
+                
+                <!--画像-->
+                <div class="form-group row">
+                    <label for="{{ form.img.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">画像(任意)</label>
+                    <div class="col-sm-9">
+                        {{ form.img|add_class:'form-control' }}
+                        <br>
+                    </div>
+                </div>
+
+                <!--答え-->
+                <div class="form-group row">
+                    <label for="{{ form.answer.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">
+                        答え
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form.answer|add_class:'form-control' }}
+                        <br>
+                    </div>
+                </div>
+
+                <!--解説-->
+                <div class="form-group row">
+                    <label for="{{ form.explain.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">
+                        解説(任意)
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form.explain|add_class:'form-control' }}
+                        <br>
+                    </div>
+                </div>
+
+                <!--送信-->
+                <div class="form-group row">
+                    <div class="col-sm">
+                        <button type="submit" class="btn btn-primary">投稿</button>
+                    </div>
+                </div>
+                <br><br><br>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock contents %}

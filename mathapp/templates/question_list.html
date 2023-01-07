@@ -1,0 +1,115 @@
+{% load static %}
+{% load my_templatetags %}
+
+<!--クエリ切り替えバー-->
+<br>
+
+{% for message in messages %}
+    <p style="text-align: center;" {% if message.tags %} class="{{message.tags}}" {% endif %}>
+    {{message}}
+    </p>
+{% endfor %}
+    
+<div class="tab-wrap">
+    <!--新しい投稿ページへのリンク-->
+    <input id="TAB-01" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:index" %}'" /><label class="tab-label" for="TAB-01">新しい投稿</label>
+
+    <!--人気の投稿へのリンク-->
+    <input id="TAB-03" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:popular" %}'" /><label class="tab-label" for="TAB-03">人気の投稿</label>
+    
+    <!--古い投稿ページへのリンク-->
+    <input id="TAB-02" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:old" %}'" /><label class="tab-label" for="TAB-02">古い投稿</label>
+</div>
+<!--問題配置-->
+<div class="album py-4 bg-light">
+    <div class="container" id="cards">
+        <h3 class="" style="text-align: center; margin: 30px;">{{fillter}}</h3>
+        <!--検索関連のフロント-->
+        {% if object_list.0 %} <!--もし表示させる問題が一つでもあったら-->
+            {% if keyword %}  <!--もしキーワードが送信されていたら(検索して問題が一つでも見つかったら)-->
+                <p>「{{keyword}}」の検索結果:{{count}}件見つかりました</p>
+            {% endif %}
+        {% else %} <!--もし表示させる問題がなかったら-->
+            {% if serchview %} <!--もし検索画面だったら-->
+            <div style="display: flex;">
+                <div style="width: 33%;">
+                    <p> </p>
+                </div>
+                <div class="d-grid" style="align-items: center;">
+                    <img src="{% static "img/sleep.png" %}" alt="画像" width="300" style="margin-left: 50px;">
+                    <h5 class="">検索されたワードに一致する問題はありませんでした</h5>
+                </div>
+            </div>
+            {% else %}
+                {% if have_follow %}<!--もしフォローユーザーの投稿の画面だったら-->
+                <div style="display: flex;">  <!--投稿を促す表示を行う-->
+                    <div style="width: 33%;">
+                        <p> </p>
+                    </div>
+                    <div class="d-grid" style="align-items: center;">
+                        <img src="{% static "img/sleep2.png" %}" alt="画像" width="300" style="margin-left: 50px;">
+                        <h5 class="">フォローしているユーザーがいません</h5>
+                    </div>
+                </div>
+                {% else %}<!--そうではないなら-->
+                <div style="display: flex;">  <!--投稿を促す表示を行う-->
+                    <div style="width: 33%;">
+                        <p> </p>
+                    </div>
+                    <div class="d-grid" style="align-items: center;">
+                        <img src="{% static "img/sleep2.png" %}" alt="画像" width="300" style="margin-left: 50px;">
+                        <h5 class="">まだ投稿はありません。どんどん投稿しましょう!</h5>
+                        <br><br>
+                        <a href="{% url "mathapp:post" %}" class="btn btn-primary">投稿する</a>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+            
+        {% endif %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" >
+                
+
+            {% for question in object_list %}  <!--object_list➡python側で抽出した問題達-->  <!--question➡問題オブジェクト。データベースに保存されているtitleフィールドなどを持つ-->
+            <!--カード-->  <!--forで問題カードを動的生成-->
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title">{{question.title}}</h3>
+                        <p class="card-text">
+                            {{question.content|truncatechars:20}}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <!--詳細ページボタン-->
+
+                                {% if user.is_authenticated %}
+                                <!--ログインしていたら-->
+                                <button type="button" class="btn btn-primary"onclick="location.href='{% url "mathapp:question_detail" question.pk %}'">もっと見る</button>
+                                {% else %}
+                                <!--ログインしていなかったら-->
+                                <button type="button" class="btn btn-primary"onclick="location.href='{% url "accounts:login" %}'">ログインしてもっと見る</button>
+                                {% endif %}
+
+                            </div>
+                            <div class="d-flex">
+                                
+                                <small class="text-muted">
+                                    いいね {% yoshimo_list good_list forloop.counter %}  <!--自作テンプレートタグでいいね数を表示-->
+                                </small>
+                            </div>
+                            {% if user.is_authenticated %}<!---もしログインしていたら-->
+                                <div>  <!---ユーザー名を表示-->
+                                    <img src="{% static "img/people.jpg" %}" alt="" width="40" height="40">
+                                    <small class="text-muted"><a href="{% url "mathapp:user_list" user=question.user.id %}">{{question.user}}</a></small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--カード-->
+            {% endfor %}
+        </div>
+    </div>
+</div>

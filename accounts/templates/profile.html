@@ -1,0 +1,60 @@
+<!--ベーステンプレートを適用-->
+{% extends 'base.html' %}
+<!--widget_tweaksの適用-->
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block title %}
+    Mbirth - Profile
+{% endblock title %}
+
+
+{% block contents %}
+{% if user.is_authenticated == False %}
+<!--ログインしていなかったらheroを表示-->
+    
+<!--hero部分を追加-->
+{% include 'hero.html' %}
+
+{% endif %}    
+<!--クエリ切り替えバー-->
+<br>
+<div class="tab-wrap">
+    <!--新しい投稿ページへのリンク-->
+    <input id="TAB-01" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:index" %}'" /><label class="tab-label" for="TAB-01">新しい投稿</label>
+
+    <!--古い投稿ページへのリンク-->
+    <input id="TAB-02" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:old" %}'" /><label class="tab-label" for="TAB-02">古い投稿</label>
+
+    <!--人気の投稿へのリンク-->
+    <input id="TAB-03" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:popular" %}'" /><label class="tab-label" for="TAB-03">人気の投稿</label>
+    
+
+</div>
+<div class="px-4 py-5 my-1 text-center bg-light">
+    <h1 class="">プロフィール編集</h1>
+    <p style="color: gray;">ユーザー {{user}}</p>
+    <div class="col-lg-6 mx-auto">
+        <form method="post">
+            {% csrf_token %}
+            <br><br>
+            <div class="form-group row">
+                <label for="{{ form.introduction.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">
+                    自己紹介・一言を入力
+                </label>
+                <div class="col-sm-9">
+                    {{ form.introduction|add_class:'form-control' }}  <!--form-controlクラスを付与してformに格納されているinputボックスを表示-->
+                    <br>
+                </div>
+            </div>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"><!--検索ボタン-->
+                <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">更新</button>
+            </div>
+        </form>
+        <br>
+        
+    </div>
+</div>
+{% endblock contents %}
+    

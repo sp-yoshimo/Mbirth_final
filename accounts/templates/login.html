@@ -1,0 +1,75 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.84.0">
+  <title>ログイン</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="icon" href="{% static "favicon.ico" %}">
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+
+
+  <!-- Custom styles for this template -->
+  <link href="{% static "css/signin.css" %}" rel="stylesheet">
+</head>
+
+<body class="text-center">
+
+  <main class="form-signin">
+    <!--ユーザー名とパスワード名が一致しない場合のメッセージ-->
+    {% if form.errors %}
+    <p style="color: red;">ユーザー名とパスワードが一致しません</p>
+    {% endif %}
+    <!--ログインのフォームを配置-->
+    <form method="post">
+      {% csrf_token %}
+      <img class="mb-4" src="{% static "img/mbirth_logo.png" %}" alt="" width="120" height="">
+      <h1 class="h3 mb-3 fw-normal">Please  Login</h1>
+
+      <!--Usernameのラベル(非表示)-->
+      <label for="Username" class="visually-hidden">User name</label>
+      <!--ユーザー名のinputタグ-->
+      <input type="text" name="username" id="id_username" maxlength="150" autocapitalize="none" autocomplete="username" class="form-control" placeholder="ユーザー名" required autofocus>
+
+      <!--Passwordのラベル(非常時)-->
+      <label for="Password" class="visually-hidden">PassWord</label>
+      <!--passwordのinput-->
+      <input type="password" name="password" id="id_password" autocomplete="current-password" class="form-control" placeholder="パスワード" required autofocus>
+
+      <!--会員登録ページへの誘導-->
+      <p><a href="{% url "accounts:signup" %}" style="text-decoration: none;">新規登録はこちらから</a></p>
+      
+      <input type="submit" class="w-100 btn btn-primary btn-lg" value="ログイン">
+
+      <!--ログイン直後のリダイレクト先-->
+      <input type="hidden" name="next" value="{% url "mathapp:index" %}">
+    </form>
+  </main>
+
+
+
+</body>
+
+</html>

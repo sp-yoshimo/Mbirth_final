@@ -1,0 +1,76 @@
+<!--ベーステンプレートを適用-->
+{% extends 'base.html' %}
+
+<!--widget_tweaksの適用-->
+{% load widget_tweaks %}
+
+<!--タグ名-->
+{% block title %}
+Sign up
+{% endblock title %}
+
+
+{% block contents %}
+
+<!--BootStrapのグリッドシステム-->
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>会員登録</h3>
+            <br>
+            <!--サインアップのフォームを配置-->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!--ユーザーネーム-->
+                <div class="form-group row">
+                    <label for="{{ form.username.id_for_label }}" class="col-sm-3 col-form-label">ユーザー名</label>
+                    <div class="col-sm-9">
+                        {{ form.username|add_class:'form-control' }}
+                        {% for error in form.username.errors %}
+                        <span class="help-block" style="color: red;">{{ error }}</span>
+                        <br>
+                        {% endfor %}
+                    </div>
+                </div>
+                <br>
+                <!--パスワード1-->
+                <div class="form-group row">
+                    <label for="{{ form.password1.id_for_label }}" class="col-sm-3 col-form-label">パスワード</label>
+                    <div class="col-sm-9">
+                        {{ form.password1|add_class:'form-control' }}
+                        {% for error in form.password1.errors %}
+                        <span class="help-block" style="color: red;">{{ error }}</span>
+                        <br>
+                        {% endfor %}
+                    </div>
+                </div>
+                <br>
+                <!--パスワード2-->
+                <div class="form-group row">
+                    <label for="{{ form.password2.id_for_label }}" class="col-sm-3 col-form-label">パスワード(確認用)</label>
+                    <div class="col-sm-9">
+                        {{ form.password2|add_class:'form-control' }}
+                        {% for error in form.password2.errors %}
+                        <span class="help-block" style="color: red;">{{ error }}</span>
+                        <br>
+                        {% endfor %}
+                    </div>
+                </div>
+                <hr>
+
+                <!--送信-->
+                <div class="form-group row">
+                    <div class="col-sm">
+                        <button type="submit" class="btn btn-primary">登録</button>
+                    </div>
+                </div>
+            </form>
+
+            <!--トップページへのリンクテキスト-->
+            <br>
+        </div>
+    </div>
+</div>
+{% endblock contents %}

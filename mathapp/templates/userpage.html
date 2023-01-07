@@ -1,0 +1,284 @@
+<!--ベーステンプレートを適用-->
+{% extends 'base.html' %}
+<!--widget_tweaksの適用-->
+{% load widget_tweaks %}
+{% load static %}
+{% load my_templatetags %}
+
+
+{% block title %}
+    Mbirth - UserPage
+{% endblock title %}
+
+
+{% block contents %}
+{% if user.is_authenticated == False %}
+<!--ログインしていなかったらheroを表示-->
+    
+    <!--hero部分を追加-->
+    {% include 'hero.html' %}
+
+{% endif %}
+
+<!--クエリ切り替えバー-->
+<br>
+<div class="tab-wrap">
+    <!--新しい投稿ページへのリンク-->
+    <input id="TAB-01" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:index" %}'" /><label class="tab-label" for="TAB-01">新しい投稿</label>
+
+    <!--人気の投稿へのリンク-->
+    <input id="TAB-03" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:popular" %}'" /><label class="tab-label" for="TAB-03">人気の投稿</label>
+    
+    <!--古い投稿ページへのリンク-->
+    <input id="TAB-02" type="radio" name="TAB" class="tab-switch"onclick="location.href='{% url "mathapp:old" %}'" /><label class="tab-label" for="TAB-02">古い投稿</label>
+</div>
+<div class="px-4 py-5 my-1 text-center bg-light">
+    <h1 class="display-5 fw-bold">
+        {% if view_user %}  <!--もし正式にユーザーページにいったら-->
+            {{view_user}}
+        {% else %} <!--不正にユーザーページにいったら-->
+            ユーザーが存在しません
+        {% endif %}
+    </h1>
+    {% if view_user %}
+        <p style="color: gray;">総獲得いいね数 {{all_good}}</p>
+        <div style="display: flex; justify-content: center;">
+            <p style="color: gray;" class="mx-2">フォロー {{follow}}</p>
+            <p style="color: gray;" class="mx-2">フォロワー {{follower}}</p>
+        </div>
+    {% endif %}
+    <p>{{introduction}}</p>
+    <div class="col-lg-6 mx-auto">
+        <br>
+        
+        {% if view_user == request.user %} <!--もしユーザーページで表示しているユーザーが現在ログインしているユーザーだったら-->
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button type="submit" class="btn btn-primary btn-lg px-4 gap-3"onclick="location.href='{% url "accounts:profile" request.user.id %}'">プロフィールを編集</button>
+        </div>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button type="submit" class="btn btn-secondary btn-lg px-4 my-4 gap-3"onclick="location.href='{% url "accounts:logout"%}'">ログアウト</button>
+        </div>
+        {% else %}<!--そうでないなら-->
+        
+            {% if view_user %}
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"><!--フォロー-->
+                    
+                    {% if is_follow%}<!--もし閲覧しているユーザーを既にフォローしていたら-->
+                        <button type="submit" class="btn btn-primary btn-lg px-4 gap-3"onclick="location.href='{% url "mathapp:follow" view_user.id %}'">フォロー解除</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary btn-lg px-4 gap-3"onclick="location.href='{% url "mathapp:follow" view_user.id %}'">フォロー</button>
+                    {% endif %}
+            </div>
+            {% endif %}
+            
+        {% endif %}
+            
+    </div>
+</div>
+<div class="album py-5 bg-white">
+    <div class="container" id="cards">
+        <h3 class="" style="text-align: center; margin: 30px;">{{fillter}}</h3>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" >
+            <div class="col-lg-12 mx-auto">
+                <!--ボタンを押したらフォームが出てくる-->
+                <div class="accordion" id="accordionExample">
+
+
+                    <!--ボタンを押したら投稿一覧が出てくる-->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                {{view_user}}の投稿一覧
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <!--問題配置-->
+                                <div class="album py-4 bg-white">
+                                    <div class="container" id="cards">
+                                        <!--検索関連のフロント-->
+                                        {% if object_list.0 %} <!--もし表示させる問題が一つでもあったら-->
+                                            {% if keyword %}  <!--もしキーワードが送信されていたら(検索して問題が一つでも見つかったら)-->
+                                                <p>「{{keyword}}」の検索結果:{{count}}件見つかりました</p>
+                                            {% endif %}
+                                        {% else %} <!--もし表示させる問題がなかったら-->
+                                            {% if serchview %} <!--もし検索画面だったら-->
+                                            <div style="display: flex;">
+                                                <div style="width: 33%;">
+                                                    <p> </p>
+                                                </div>
+                                                <div class="d-grid" style="align-items: center;">
+                                                    <img src="{% static "img/sleep.png" %}" alt="画像" width="300" style="margin-left: 50px;">
+                                                    <h5 class="">検索されたワードに一致する問題はありませんでした</h5>
+                                                </div>
+                                            </div>
+                                            {% else %}
+                                            <div style="display: flex;">
+                                                <div style="width: 33%;">
+                                                    <p> </p>
+                                                </div>
+                                                <div class="d-grid" style="align-items: center;">
+                                                    <img src="{% static "img/sleep2.png" %}" alt="画像" width="300" style="margin-left: 50px;">
+                                                    <h5 class="">まだ投稿はありません。どんどん投稿しましょう!</h5>
+                                                    <br><br>
+                                                    <a href="{% url "mathapp:post" %}" class="btn btn-primary">投稿する</a>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            
+                                        {% endif %}
+                                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" >
+                                                
+
+                                            {% for question in object_list %}  <!--object_list➡python側で抽出した問題達-->  <!--question➡問題オブジェクト。データベースに保存されているtitleフィールドなどを持つ-->
+                                            <!--カード-->  <!--forで問題カードを動的生成-->
+                                            <div class="col">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-body">
+                                                        <h3 class="card-title">{{question.title}}</h3>
+                                                        <p class="card-text">
+                                                            {{question.content|truncatechars:20}}
+                                                        </p>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div class="btn-group">
+                                                                <!--詳細ページボタン-->
+
+                                                                {% if user.is_authenticated %}
+                                                                <!--ログインしていたら-->
+                                                                <button type="button" class="btn btn-primary"onclick="location.href='{% url "mathapp:question_detail" question.pk %}'">もっと見る</button>
+                                                                {% else %}
+                                                                <!--ログインしていなかったら-->
+                                                                <button type="button" class="btn btn-primary"onclick="location.href='{% url "accounts:login" %}'">ログインしてもっと見る</button>
+                                                                {% endif %}
+
+                                                            </div>
+                                                            {% if user.is_authenticated %}<!---もしログインしていたら-->
+                                                                <div>  <!---ユーザー名を表示-->
+                                                                    <small class="text-muted"><a href="{% url "mathapp:user_list" user=question.user.id %}">{{question.user}}</a></small>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--カード-->
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--ボタンを押したらいいねした投稿一覧が出てくる-->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                {{view_user}}のいいねした投稿一覧
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                
+                                <div class="album py-4 bg-white">
+                                    <div class="container" id="cards">
+                                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" >
+                                                
+
+                                            {% for question in good_questions %}  <!--object_list➡python側で抽出した問題達-->  <!--question➡問題オブジェクト。データベースに保存されているtitleフィールドなどを持つ-->
+                                            <!--カード-->  <!--forで問題カードを動的生成-->
+                                            <div class="col">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-body">
+                                                        <h3 class="card-title">{{question.title}}</h3>
+                                                        <p class="card-text">
+                                                            {{question.content|truncatechars:20}}
+                                                        </p>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div class="btn-group">
+                                                                <!--詳細ページボタン-->
+
+                                                                {% if user.is_authenticated %}
+                                                                <!--ログインしていたら-->
+                                                                <button type="button" class="btn btn-primary"onclick="location.href='{% url "mathapp:question_detail" question.pk %}'">もっと見る</button>
+                                                                {% else %}
+                                                                <!--ログインしていなかったら-->
+                                                                <button type="button" class="btn btn-primary"onclick="location.href='{% url "accounts:login" %}'">ログインしてもっと見る</button>
+                                                                {% endif %}
+
+                                                            </div>
+                                                            {% if user.is_authenticated %}<!---もしログインしていたら-->
+                                                                <div>  <!---ユーザー名を表示-->
+                                                                    <small class="text-muted"><a href="{% url "mathapp:user_list" user=question.user.id %}">{{question.user}}</a></small>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--カード-->
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--ボタンを押したらフォローした投稿一覧が出てくる-->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                {{view_user}}のフォローユーザー
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                
+                                <div class="album py-4 bg-white">
+                                    <div class="container" id="cards">
+                                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" >
+                                                
+
+                                            {% for user in follow_users %}
+                                            <!--カード-->  <!--forで問題カードを動的生成-->
+                                            <div class="col">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-body">
+                                                        <h3 class="card-title">{{user.follow}}</h3>
+                                                        <p class="card-text">
+                                                            
+                                                            {% for intro in other_intro  %}<!--フォローユーザーの一言表示処理-->
+                                                                {% if intro.user == user.follow %} <!--現在表示しているユーザーの一言のみを表示-->
+                                                                    {{intro.introduction}}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                                
+                                                        </p>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div class="btn-group">
+                                                                <!--詳細ページボタン-->
+                                                                <button type="button" class="btn btn-primary"onclick="location.href='{% url "mathapp:user_list" user.follow.id %}'">もっと見る</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--カード-->
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contents %}

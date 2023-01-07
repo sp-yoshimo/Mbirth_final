@@ -1,0 +1,208 @@
+<!--ベーステンプレートを適用-->
+{% extends 'base.html' %}
+
+{% load static %}
+<!--widget_tweaksの適用-->
+{% load widget_tweaks %}
+<!--タグ名-->
+
+{% block title %}
+Mbirth - Detail
+{% endblock title %}
+
+
+{% block contents %}
+
+<br>
+{% for message in messages %}
+    <p style="text-align: center;" {% if message.tags %} class="{{message.tags}}" {% endif %}>
+    {{message}}
+    </p>
+{% endfor %}
+<div class="container my-5">
+    <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+        <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+            <div class="d-flex">
+                <h1 class="display-4 fw-bold lh-1">{{object.title}}</h1>
+            </div>
+            {% if object.user == request.user %}
+                <p style="color: gray;">自分の投稿です</p>
+            {% endif %}
+                
+            <p class="lead" style="font-weight: bold;">
+                {{object.content}}
+            </p>
+            <br>
+            {% if is_showanswer %}<!--もし答え表示モードなら-->
+                {% if request.user == object.user %}<!--自分の投稿なら-->
+                <!--編集ボタンを配置-->
+                    <a class="btn btn-outline-secondary btn-lg px-4 me-md-2 fw-bold" href="{% url "mathapp:edit" object.pk %}">編集する</a>
+                {% endif %}
+                <br><br>
+                <div>
+                    <h3 style="border-bottom: 1px solid #333;">答え {{object.answer}}</h3>
+                </div>
+                {% if object.explain %}
+                <br><br>
+                <h5>解説</h5>
+                <p>{{object.explain}}</p>
+                {% else %}
+                <br>
+                {% endif %}
+            {% else %}<!--そうでないなら-->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+                <a class="btn btn-primary btn-lg px-4 me-md-2 fw-bold" href='{% url "mathapp:question_answer" object.pk %}'>答えを見る</a>
+                
+                {% if request.user == object.user %}<!--自分の投稿なら-->
+                    <!--編集ボタンを配置-->
+                    <a class="btn btn-outline-secondary btn-lg px-4 me-md-2 fw-bold" href="{% url "mathapp:edit" object.pk %}">編集する</a>
+                {% endif %}
+                    
+            </div>
+            
+            {% endif %}
+            <br>
+            <!--投稿日時-->
+            <p>{{object.posted_at}}に投稿
+            </p>
+                
+            
+            <hr>
+            <div>
+                <div style="display: flex;">
+                    <!--いいね数関連-->
+                    <div class="detail-explain-item iine"><!--いいねdiv-->
+                        <form action="{% url 'mathapp:like' object.pk %}" method="POST">
+                            {% csrf_token %}
+                            <div class="d-flex">
+                                {% if object.id in liked_list %}
+                                <button id="like" name="{{object.id}}" class="heart" style="background-color: rgba(0,0,0,0); border: none;">
+                                    <img src="{% static "img/heart.png" %}" alt="画像" width="30">
+                                </button>
+                                {% else %}
+                                <button id="like" name="{{object.id}}" class="heart" style="background-color: rgba(0,0,0,0); border: none;">
+                                    <img src="{% static "img/null-heart.png" %}" alt="画像" width="30">
+                                </button>
+                                {% endif %}
+                                <p name="{{object.id}}-count" class="count yoshi-good-count"> {{object.like_set.count}}</p>
+                            </div>
+                        </form>
+                    </div>
+                    <!--投稿者名-->
+                    <div style="display: flex;" class="detail-explain-item">
+                        <img src="{% static "img/people.jpg" %}" alt="" width="40" height="40">
+                        <p style="font-size: 20px;"><a href="{% url "mathapp:user_list" user=object.user.id %}"
+                            style="text-decoration: none;">{{object.user.username}}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+            {% if object.img %}
+            <!--画像が投稿されていたら-->
+            <img src={{object.img.url}} class="d-block mx-lg-auto img-fluid" alt="画像" width="700" height="500"
+                loading="lazy">
+            {% else %}
+            <!--画像が投稿されたいなかったら-->
+            <img src={% static "img/detail-bg1.jpg" %} class="d-block mx-lg-auto img-fluid" alt="画像" width="700"
+                height="500" loading="lazy">
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!--コメント-->
+<div class="px-4 py-5  text-center bg-light">
+    <h3 class="display-6 fw-bold">コメント</h3>
+    <br>
+    <div class="col-lg-6 mx-auto">
+        <!--ボタンを押したらフォームが出てくる-->
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    コメントを投稿
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <!--フォーム-->
+                        <form method="post">
+                            {% csrf_token %}
+                            <br><br>
+                            <div class="form-group row">
+                                <label for="{{ form.comment.id_for_label }}" class="col-sm-3 col-form-label" style="font-weight: bold;">
+                                    コメントを投稿
+                                </label>
+                                <div class="col-sm-9">
+                                    {{ form.comment|add_class:'form-control' }}  <!--form-controlクラスを付与してformに格納されているinputボックスを表示-->
+                                    <br>
+                                    <p style="color: gray;">誹謗中傷や公序良俗に反する内容はご控えください</p>
+                                    <br>
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"><!--検索ボタン-->
+                                <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">投稿</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--ボタンを押したらコメント一覧が出てくる-->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        コメント一覧
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        
+                        {% for comment in comments %}<!--コメントをfor文で一つずつ取り出す-->
+                        
+                            <strong>{{comment.user}}:</strong>  <!--投稿者の名前を出力-->
+                            {{comment.comment}}  <!--コメントを出力-->
+                            <br><br>
+                            {% if comment.user == request.user %}<!--もしコメントの投稿主が現在ログインしているユーザーだったら-->
+                                <a href="{% url "mathapp:delete_comment" comment.pk object.pk %}" class="btn btn-danger" style="font-size: 15px;">コメントを削除</a><!--コメント削除ボタンを配置-->
+                            {% endif %}
+                            <hr><!--区切り線-->
+                        {% endfor %}
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(event){
+        $(document).on('click', '#like', function(event){
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'mathapp:like' object.pk %}",
+                data: {
+                    'question_id': $(this).attr('name'),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                dataType: 'json',
+                success: function(response){
+                    selector = document.getElementsByName(response.question_id);
+                    if(response.liked){
+                        $(selector).children("img").attr("src","{% static 'img/heart.png' %}");
+                    }
+                    else {
+                        $(selector).children("img").attr("src","{% static 'img/null-heart.png' %}");
+                    }
+                    selector2 = document.getElementsByName(response.question_id + "-count");
+                    $(selector2).text(" "+response.count);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+{% endblock contents %}
