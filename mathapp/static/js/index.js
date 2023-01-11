@@ -2,7 +2,7 @@ var beforePos = 0;//スクロールの値の比較用の設定
 
 //スクロール途中でヘッダーが消え、上にスクロールすると復活する設定を関数にまとめる
 function ScrollAnime() {
-    var elemTop = $('').offset().top;//#area-2の位置まできたら
+    var elemTop = $('#cards').offset();//#area-2の位置まできたら
 	var scroll = $(window).scrollTop();
     //ヘッダーの出し入れをする
     if(scroll == beforePos) {
